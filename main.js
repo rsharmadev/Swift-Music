@@ -4,7 +4,6 @@ const path = require("path");
 const yt = require('youtube-mp3-downloader');
 const fetch = require('node-fetch');
 const Jimp = require('jimp');
-const getMP3Duration = require('get-mp3-duration')
 const yts = require('yt-search');
 
 
@@ -13,7 +12,6 @@ const yts = require('yt-search');
 let userDataPath = app.getPath('userData');
 let playlistPath = path.join(userDataPath, '/playlist.json');
 let songsPath = path.join(userDataPath, '/songs');
-let tempPath = path.join(userDataPath, '/temp');
 let thumbnailPath = path.join(userDataPath, '/thumbnails');
 let playlist;
 // console.log(userDataPath);
@@ -23,6 +21,12 @@ let config = new yt({
     "ffmpegPath": "ffmpeg.exe",
     "outputPath": songsPath
 });
+
+let temp_storage = {
+    "id": "",
+    "name": "",
+    "length": ""
+}
 
 
 
@@ -111,6 +115,9 @@ async function getImage(url, id) {
 }
 
 async function saveToJson(id, songName, length) {
+    temp_storage["id"] = id;
+    temp_storage["name"] = songName;
+    temp_storage["length"] = length;
     console.log(length);
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     /*
@@ -147,6 +154,19 @@ async function translate_video_id(id) {
 ipcMain.on('download_song', (event, data) => {
     video_download(data);
 })
+
+config.on("finished", function(error, data) {
+    console.log('clicked');
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    playlist['songs'][String(Date.now())] = {
+        id: temp_storage["id"],
+        name: temp_storage["name"],
+        length: temp_storage["length"]
+    }
+
+
+    fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+});
 
 
 ipcMain.on('youtube_id', (event, data) => {

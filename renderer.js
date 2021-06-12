@@ -115,19 +115,7 @@ ipc.on('youtube_id', (event, data) => {
     let songDiv = songTemplate(data['id'], data['name'], String(data['length']));
     songDiv.addEventListener('click', () => {
         ipcRenderer.send('download_song', data['id']);
-        console.log('clicked');
-        playlist = JSON.parse(fs.readFileSync(playlistPath));
-        playlist['songs'][String(Date.now())] = {
-            id: data['id'],
-            name: data['name'],
-            length: String(data['length'])
-        }
-
-
-        fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
-
-        
-    })
+    });
 });
 
 home.addEventListener('click', () => {
