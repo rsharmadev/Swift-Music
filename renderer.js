@@ -88,7 +88,7 @@ function updater() {
 
 }
 
-let interval = setInterval(updater, 100);
+let interval = setInterval(updater, 600);
 
 
 update(firstrun = true);
