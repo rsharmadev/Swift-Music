@@ -89,7 +89,7 @@ function updater() {
 }
 
 let interval = setInterval(updater, 600);
-
+document.getElementById("refresh_img").style.display = "none";
 
 update(firstrun = true);
 while(songsDiv.firstChild) {
@@ -170,6 +170,14 @@ loop.addEventListener('click', async() => {
     } else {
         sound.loop(true);
     }
+});
+
+ipc.on("hide_loading", (event, data) => {
+    document.getElementById("refresh_img").style.display = "none";
+});
+
+ipc.on("show_loading", (event, data) => {
+    document.getElementById("refresh_img").style.display = "inline-block";
 });
 
 

@@ -156,10 +156,16 @@ async function translate_video_id(id) {
 
 
 ipcMain.on('download_song', (event, data) => {
+    win.webContents.send("show_loading", {
+        "": ""
+    });
     video_download(data);
 })
 
 ipcMain.on('download_search_song', (event, data) => {
+    win.webContents.send("show_loading", {
+        "": ""
+    });
     temp_storage["id"] = data;
     video_search_download(data);
 })
@@ -179,6 +185,9 @@ config.on("finished", function(error, data) {
 
 
     fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+    win.webContents.send("hide_loading", {
+        "": ""
+    });
 });
 
 search_config.on("finished", async function(error, data) {
@@ -196,6 +205,9 @@ search_config.on("finished", async function(error, data) {
     }
 
     fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+    win.webContents.send("hide_loading", {
+        "": ""
+    });
 });
 
 
