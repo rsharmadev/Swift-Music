@@ -36,7 +36,8 @@ const time = document.getElementById('time');
 let length;
 
 
-function update() {
+function update(firstrun = false) {
+    volumeBar.value = playlist['general']['songPlaying']['volume'];
     if(playlist['general']['songPlaying']['id'] == null || playlist['general']['songPlaying']['id'] == 'id') {
         console.log('what');
         for(const [key, value] of Object.entries(playlist['songs'])) {
@@ -46,7 +47,6 @@ function update() {
                 name: value['name'],
                 timestamp: '0',
                 playPause: 'paused',
-                volume: "0.50"
             }
             break;
     
@@ -60,8 +60,8 @@ function update() {
         console.log((parseInt(playlist['general']['songPlaying']['timestamp']) / parseInt(playlist['general']['songPlaying']['length'])) * 100)
         playingBar.value = (parseInt(playlist['general']['songPlaying']['timestamp']) / parseInt(playlist['general']['songPlaying']['length'])) * 100;
         timestamp.innerHTML = playlist['general']['songPlaying']['timestamp'];
-        time.innerHTML = new Date(playlist['general']['songPlaying']['length'] * 1000).toISOString().substr(11, 8).substr(3)
-        if(playlist['general']['songPlaying']['playPause'] == 'paused') {
+        time.innerHTML = playlist['general']['songPlaying']['length']
+        if(playlist['general']['songPlaying']['playPause'] == 'paused' || firstrun == true) {
             sound = new Howl({
                 src: [`${songsPath}\\${playlist['general']['songPlaying']['id']}.mp3`],
                 html5: true,
@@ -71,7 +71,12 @@ function update() {
     }
 }
 
-update();
+update(firstrun = true);
+while(songsDiv.firstChild) {
+    songsDiv.removeChild(songsDiv.lastChild);
+}
+playlist["general"]["songPlaying"]["playPause"] = "paused";
+fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
 
 youtube_id.addEventListener('input', () => {
     while(songsDiv.firstChild) {
@@ -91,7 +96,7 @@ function songTemplate(id, name, length) {
     p.className = "text-offwhite ml-8 specwidth truncate text-2xl";
     p.innerHTML = name;
     h1.className = "text-high-yellow text-md ml-auto pr-3";
-    h1.innerHTML = new Date(parseInt(length) * 1000).toISOString().substr(11, 8).substr(3);
+    h1.innerHTML = length;
     div.className = "w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4";
     div.id = id;
     div.appendChild(img);
@@ -109,6 +114,7 @@ ipc.on('youtube_id', (event, data) => {
     console.log(data);
     let songDiv = songTemplate(data['id'], data['name'], String(data['length']));
     songDiv.addEventListener('click', () => {
+        ipcRenderer.send('download_song', data['id']);
         console.log('clicked');
         playlist = JSON.parse(fs.readFileSync(playlistPath));
         playlist['songs'][String(Date.now())] = {
@@ -208,7 +214,7 @@ skipBtn.addEventListener('click', async() => {
         timestamp: "0",
         length: playlist['songs'][newUnixIndex]['length'],
         playPause: "paused",
-        volume: "50"
+        volume: playlist['general']['songPlaying']['volume']
     }
     fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
     update();
@@ -223,7 +229,9 @@ volumeBar.addEventListener('change', async() => {
 });
 
 playingBar.addEventListener('change', async() => {
-    sound.seek((parseInt(playingBar.value)/100) * parseInt(playlist['general']['songPlaying']['length']));
-    timestamp.innerHTML = new Date(((parseInt(playingBar.value)/100) * parseInt(playlist['general']['songPlaying']['length'])) * 1000).toISOString().substr(11, 8).substr(3);
-    
+    var parts = playlist['general']['songPlaying']['length'].split(':');
+    var seconds = (parseInt(parts[0]) * 60) + parseInt(parts[1]);
+    console.log(seconds);
+    sound.seek((parseInt(playingBar.value)/100) * seconds);
+    timestamp.innerHTML = new Date(((parseInt(playingBar.value)/100) * seconds) * 1000).toISOString().substr(11, 8).substr(3);
 });

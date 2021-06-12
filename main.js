@@ -5,6 +5,7 @@ const yt = require('youtube-mp3-downloader');
 const fetch = require('node-fetch');
 const Jimp = require('jimp');
 const getMP3Duration = require('get-mp3-duration')
+const yts = require('yt-search');
 
 
 
@@ -55,13 +56,7 @@ function createWindow() {
                     },
                     "otherInfo": {}
                 },
-                "songs": {
-                    "unix": {
-                        "id": "id",
-                        "name": "name",
-                        "length": "length"
-                    }
-                }
+                "songs": {}
             }
         ));
         console.log('NEW Playlist');
@@ -81,14 +76,6 @@ function createWindow() {
     } catch {
         fs.mkdirSync(thumbnailPath);
         console.log('new thumbnail');
-    }
-
-    try {
-        fs.readdirSync(tempPath);
-        console.log('temp found');
-    } catch {
-        fs.mkdirSync(tempPath);
-        console.log('new temp');
     }
 
     // Load the index.html of the app.
@@ -115,20 +102,6 @@ app.on('window-all-closed', () => {
     }
 });
 
-
-config.on('finished', function(err, data) {
-    console.log(data['videoTitle']);
-    console.log(JSON.stringify(data));
-    const buffer = fs.readFileSync(`${songsPath}\\${data['videoId']}.mp3`)
-    const duration = getMP3Duration(buffer)/1000
-
-    saveToJson(data['videoId'], data['videoTitle'], duration);
-
-
-    
-});
-
-
 async function getImage(url, id) {
     const response = await fetch(url);
     const buffer = await response.buffer();
@@ -150,7 +123,8 @@ async function saveToJson(id, songName, length) {
     fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
     win.webContents.send('youtube_id', {
         id: id,
-        name: songName
+        name: songName,
+        length: length
     });
 }
 async function resize(imagePath, dimensions) {
@@ -163,10 +137,24 @@ async function video_download(id) {
     config.download(id, `${id}.mp3`);
 }
 
+async function translate_video_id(id) {
+    let video = await yts( { videoId: id })
+    await getImage(`https://img.youtube.com/vi/${id}/0.jpg`, id);
+    saveToJson(id, video.title, video.duration.timestamp);
+
+}
+
+ipcMain.on('download_song', (event, data) => {
+    video_download(data);
+})
+
 
 ipcMain.on('youtube_id', (event, data) => {
-    await getImage(`https://img.youtube.com/vi/${id}/0.jpg`, id);
-    video_download(data);
-
+    if (data.includes("?v="))
+    {
+        var v_index = data.indexOf("?v=");
+        data = data.substring(v_index + 3);
+    }
+    translate_video_id(data);
 })
 
