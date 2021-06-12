@@ -4,18 +4,24 @@ const path = require("path");
 const yt = require('youtube-mp3-downloader');
 const fetch = require('node-fetch');
 const Jimp = require('jimp');
+const getMP3Duration = require('get-mp3-duration')
 
 
-let config = new yt({
-    "ffmpegPath": "ffmpeg.exe",
-    "outputPath": "../songs"
-});
+
 
 let userDataPath = app.getPath('userData');
 let playlistPath = path.join(userDataPath, '/playlist.json');
+let songsPath = path.join(userDataPath, '/songs');
+let tempPath = path.join(userDataPath, '/temp');
+let thumbnailPath = path.join(userDataPath, '/thumbnails');
 let playlist;
 // console.log(userDataPath);
 let win;
+
+let config = new yt({
+    "ffmpegPath": "ffmpeg.exe",
+    "outputPath": songsPath
+});
 
 
 
@@ -60,9 +66,30 @@ function createWindow() {
         ));
         console.log('NEW Playlist');
     }
+
+    try {
+        fs.readdirSync(songsPath);
+        console.log('songs found');
+    } catch {
+        fs.mkdirSync(songsPath);
+        console.log('new songs');
+    }
     
+    try {
+        fs.readdirSync(thumbnailPath);
+        console.log('thumbnail found');
+    } catch {
+        fs.mkdirSync(thumbnailPath);
+        console.log('new thumbnail');
+    }
 
-
+    try {
+        fs.readdirSync(tempPath);
+        console.log('temp found');
+    } catch {
+        fs.mkdirSync(tempPath);
+        console.log('new temp');
+    }
 
     // Load the index.html of the app.
     win.loadFile(path.resolve(__dirname, 'public/build/index.html'))
@@ -91,15 +118,22 @@ app.on('window-all-closed', () => {
 
 config.on('finished', function(err, data) {
     console.log(data['videoTitle']);
-    saveToJson(data['videoId'], data['videoTitle'], Math.round(((data['stats']['transferredBytes']/1000000) + Number.EPSILON) * 100)/100)
+    console.log(JSON.stringify(data));
+    const buffer = fs.readFileSync(`${songsPath}\\${data['videoId']}.mp3`)
+    const duration = getMP3Duration(buffer)/1000
+
+    saveToJson(data['videoId'], data['videoTitle'], duration);
+
+
+    
 });
 
 
 async function getImage(url, id) {
     const response = await fetch(url);
     const buffer = await response.buffer();
-    fs.writeFile(`../thumbnails/${id}.jpg`, buffer, async() => {
-        await resize(`../thumbnails/${id}.jpg`, [1024, 1024]);
+    fs.writeFile(`${thumbnailPath}\\${id}.jpg`, buffer, async() => {
+        await resize(`${thumbnailPath}\\${id}.jpg`, [1024, 1024]);
     })
 }
 
@@ -116,8 +150,7 @@ async function saveToJson(id, songName, length) {
     fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
     win.webContents.send('youtube_id', {
         id: id,
-        name: songName,
-        length: length
+        name: songName
     });
 }
 async function resize(imagePath, dimensions) {
@@ -128,11 +161,12 @@ async function resize(imagePath, dimensions) {
 
 async function video_download(id) {
     config.download(id, `${id}.mp3`);
-    await getImage(`https://img.youtube.com/vi/${id}/0.jpg`, id);
 }
 
 
 ipcMain.on('youtube_id', (event, data) => {
+    await getImage(`https://img.youtube.com/vi/${id}/0.jpg`, id);
     video_download(data);
+
 })
 
