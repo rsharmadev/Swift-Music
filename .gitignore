@@ -141,3 +141,5 @@ cython_debug/
 
 # Pycharm
 .idea/
+
+node_modules/
