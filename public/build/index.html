@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./tailwind.css">
+    <link rel="stylesheet" href="./animations.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <title>Swift Music</title>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.js" integrity="sha512-J+vDCDlH9TYo4uL0R5g9TCvJj8oGATXWi17AcOyUhuyEbJf0SF5HSmKv1gwPCEowauPanV0RAaYjyU+kbowtQg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.core.min.js" integrity="sha512-wzeZyTAYqFv+VKD/mGwXREXBIzy4pE3E617SBskkLFuYcPQgX6px2Il3gwZwXb9DuyjYPIsbTEO/6c3+mUvoPA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js" integrity="sha512-L6Z/YtIPQ7eU3BProP34WGU5yIRk7tNHk7vaC2dB1Vy1atz6wl9mCkTPPZ2Rn1qPr+vY2mZ9odZLdGYuaBk7dQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <div class="w-screen h-screen flex flex-col">
+        <section class="bg-bggray h-full w-full flex flex-row">
+            <nav class="minw bg-gradient-to-b from-darkgray to-botnav h-full">
+                <div class="relative pt-32">
+                    <div class="rounded-full absolutepos w-16 h-16 bg-placeholder opacity-30"></div>
+                    <img src="../images/logo.png" alt="logo" class="w-1/3 absolutepos">
+                </div>
+                <div id='home' class="selected w-3/4 py-2 rounded-lg mt-6 mx-auto">
+                    <img src="../images/homefill.svg" class="mx-auto w-8">
+                </div>
+                <div class="notselected w-3/4 py-2 rounded-lg mt-5 mx-auto">
+                    <img src="../images/navsound.svg" class="mx-auto w-8">
+                </div>
+            </nav>
+            <section class="flex flex-row h-full w-full">
+                <div style="flex: 11 0 0" class="w-full h-full px-9 mt-7">
+                    <div class="flex flex-row">
+                        <div style="flex: 7 0 0;"
+                            class="h-10 bg-darkgray rounded-full mr-4 flex flex-row px-4 items-center">
+                            <img src="../images/search.svg" class="w-5">
+                            <input type="text" placeholder="Search any song youtube offers..."
+                                class="ml-5 w-full bg-transparent text-white">
+                        </div>
+                        <div style="flex: 4 0 0;" class="h-10 bg-darkgray rounded-full ml-4 flex items-center">
+                            <input id="youtube_id" type="text" placeholder="Youtube ID" class="mx-5 w-full bg-transparent text-white">
+                        </div>
+                    </div>
+                    <div class="my-5 flex flex-row bg-high-yellow w-96 py-3 px-3 rounded-md">
+                        <img src="../images/alert.svg" class="pr-5 pl-2">
+                        <p class="text-black text-md font-semibold">Click on song to save to your playlist!</p>
+                    </div>
+                    <div id="songsDiv" class="specheight overflow-y-auto pr-3">
+                        <div class="w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4">
+                            <img src="../images/clairo.jpg" class="w-20 h-20">
+                            <p class="text-offwhite ml-8 specwidth truncate text-2xl">
+                                Clairo
+                                - Sofia</p>
+                            <h1 class="text-high-yellow text-md ml-auto pr-3">3:12</h1>
+                        </div>
+                        <div class="w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4">
+                            <img src="../images/clairo.jpg" class="w-20 h-20">
+                            <p class="text-offwhite ml-8 specwidth truncate text-2xl">
+                                Clairo
+                                - Sofia</p>
+                            <h1 class="text-high-yellow text-md ml-auto pr-3">3:12</h1>
+                        </div>
+                        <div class="w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4">
+                            <img src="../images/clairo.jpg" class="w-20 h-20">
+                            <p class="text-offwhite ml-8 specwidth truncate text-2xl">
+                                Clairo
+                                - Sofia</p>
+                            <h1 class="text-high-yellow text-md ml-auto pr-3">3:12</h1>
+                        </div>
+                        <div class="w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4">
+                            <img src="../images/clairo.jpg" class="w-20 h-20">
+                            <p class="text-offwhite ml-8 specwidth truncate text-2xl">
+                                Clairo
+                                - Sofia</p>
+                            <h1 class="text-high-yellow text-md ml-auto pr-3">3:12</h1>
+                        </div>
+                        <div class="w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4">
+                            <img src="../images/clairo.jpg" class="w-20 h-20">
+                            <p class="text-offwhite ml-8 specwidth truncate text-2xl">
+                                Clairo
+                                - Sofia</p>
+                            <h1 class="text-high-yellow text-md ml-auto pr-3">3:12</h1>
+                        </div>
+                        <div class="w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4">
+                            <img src="../images/clairo.jpg" class="w-20 h-20">
+                            <p class="text-offwhite ml-8 specwidth truncate text-2xl">
+                                Clairo
+                                - Sofia</p>
+                            <h1 class="text-high-yellow text-md ml-auto pr-3">3:12</h1>
+                        </div>
+                        <div class="w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4">
+                            <img src="../images/clairo.jpg" class="w-20 h-20">
+                            <p class="text-offwhite ml-8 specwidth truncate text-2xl">
+                                Clairo
+                                - Sofia</p>
+                            <h1 class="text-high-yellow text-md ml-auto pr-3">3:12</h1>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex: 4 0 0" class="w-full h-full bg-altgray">
+                    <div class="px-8 mt-7">
+                        <h1 class="text-2xl font-medium text-offwhite">Group Player</h1>
+                        <input type="text" placeholder="Insert party IP"
+                            class="bg-goodgray px-3 text-white w-full mt-5 py-2.5 font-bold rounded-md">
+                        <p class="text-high-yellow py-1.5 text-sm">Listening with 3 people*</p>
+                        <h1 class="text-2xl font-medium text-offwhite pt-16 pb-4">Queued Songs</h1>
+                        <div id='songsDiv' class="specheight overflow-y-auto pr-3">
+                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                                <img src="../images/clairo.jpg" class="w-14 h-14">
+                                <p class="text-offwhite ml-4 truncate text-lg">
+                                    Clairo
+                                    - Sofia</p>
+                                <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
+                            </div>
+                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                                <img src="../images/clairo.jpg" class="w-14 h-14">
+                                <p class="text-offwhite ml-4 truncate text-lg">
+                                    Clairo
+                                    - Sofia</p>
+                                <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
+                            </div>
+                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                                <img src="../images/clairo.jpg" class="w-14 h-14">
+                                <p class="text-offwhite ml-4 truncate text-lg">
+                                    Clairo
+                                    - Sofia</p>
+                                <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
+                            </div>
+                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                                <img src="../images/clairo.jpg" class="w-14 h-14">
+                                <p class="text-offwhite ml-4 truncate text-lg">
+                                    Clairo
+                                    - Sofia</p>
+                                <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
+                            </div>
+                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                                <img src="../images/clairo.jpg" class="w-14 h-14">
+                                <p class="text-offwhite ml-4 truncate text-lg">
+                                    Clairo
+                                    - Sofia</p>
+                                <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
+                            </div>
+                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                                <img src="../images/clairo.jpg" class="w-14 h-14">
+                                <p class="text-offwhite ml-4 truncate text-lg">
+                                    Clairo
+                                    - Sofia</p>
+                                <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
+                            </div>
+                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                                <img src="../images/clairo.jpg" class="w-14 h-14">
+                                <p class="text-offwhite ml-4 truncate text-lg">
+                                    Clairo
+                                    - Sofia</p>
+                                <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
+                            </div>
+                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                                <img src="../images/clairo.jpg" class="w-14 h-14">
+                                <p class="text-offwhite ml-4 truncate text-lg">
+                                    Clairo
+                                    - Sofia</p>
+                                <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
+                            </div>
+                        </div>
+                    </div>
+            </section>
+        </section>
+        <footer class="bg-darkgray h-28 border-t-2 border-offwhite">
+            <div class="flex flex-row items-center px-12 w-full h-full">
+                <h1 id="timestamp" class="text-high-yellow text-sm">1:01</h1>
+                <input id="playingBar" type="range" class="mx-3 h-0.5 slidercustom1 py-0.5">
+                <h1 class="text-offwhite text-sm mr-16">3:02</h1>
+                <img id="back" src="../images/backward.svg" class="h-5 w-5 mr-5 touch">
+                <img id="play" src="../images/play.svg" class="h-7 w-7 mr-5 touch">
+                <img id="skip" src="../images/forward.svg" class="h-5 w-5 mr-16 touch">
+                <img id="playingImg" src="../images/clairo.jpg" class="h-16 w-16 mr-6">
+                <div class="mr-12 w-64">
+                    <p class="text-white text-sm">Playing</p>
+                    <h1 id="playing" class="text-high-yellow text-xl truncate">Clairo - Sofia</h1>
+                </div>
+                <img src="../images/pause.svg" class="h-4 w-4">
+                <input id="volumeBar" type="range" class="mx-4 h-0.5 slidercustom2 py-0.5">
+            </div>
+        </footer>
+        <script src='../../renderer.js'></script>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,137 @@
+.minw {
+ max-width: 115px;
+ min-width: 115px;
+ width: 115px;
+}
+.absolutepos {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+.notselected:hover {
+    background: #363634;
+    cursor:pointer;
+}
+.selected {
+    background: #8a7746;
+    cursor:pointer;
+}
+.touch:hover {
+    transform: translate(0px,-2px);
+    cursor:pointer;
+}
+
+
+/*Chrome*/
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .slidercustom1 {
+      overflow: hidden;
+      width: 40rem;
+      -webkit-appearance: none;
+      background-color: #484848;
+      cursor: pointer;
+    }
+    
+    .slidercustom1::-webkit-slider-runnable-track {
+      height: 10px;
+      -webkit-appearance: none;
+      color: #F5CB5C;
+      margin-top: -1px;
+    }
+    
+    .slidercustom1::-webkit-slider-thumb {
+      width: 0px;
+      -webkit-appearance: none;
+      height: 0px;
+      cursor: pointer;
+      background: #434343;
+      box-shadow: -40rem 0 0 40rem #F5CB5C;
+    }
+
+}
+/** FF*/
+input[type="range"]::-moz-range-progress {
+  background-color: #F5CB5C; 
+}
+input[type="range"]::-moz-range-track {  
+  background-color: #484848;
+}
+/* IE*/
+input[type="range"]::-ms-fill-lower {
+  background-color: #F5CB5C; 
+}
+input[type="range"]::-ms-fill-upper {  
+  background-color: #484848;
+}
+
+.slidercustom2 {
+    overflow: hidden;
+    width: 10rem;
+    -webkit-appearance: none;
+    background-color: #484848;
+    cursor: pointer;
+  }
+  
+  .slidercustom2::-webkit-slider-runnable-track {
+    height: 10px;
+    -webkit-appearance: none;
+    color: #F5CB5C;
+    margin-top: -1px;
+  }
+  
+  .slidercustom2::-webkit-slider-thumb {
+    width: 0px;
+    -webkit-appearance: none;
+    height: 0px;
+    cursor: pointer;
+    background: #434343;
+    box-shadow: -10rem 0 0 10rem #F5CB5C;
+  }
+
+input[type='text']:focus {
+    border:hidden;
+    outline:none;
+}
+
+input[type='text']::placeholder {
+    color: #636363;
+}
+
+.specwidth {
+    width: 800px;
+}
+
+.hovback:hover {
+    background-color: #272727;
+    cursor: pointer;
+}
+
+.specheight {
+    height:500px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #292928;
+    border-radius: 10px;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #F5CB5C;
+    border-radius: 8px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #F5CB5C;
+  }
+  * {
+    font-family: 'Montserrat', sans-serif;
+  }
