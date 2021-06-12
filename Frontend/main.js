@@ -4,17 +4,7 @@ const path = require("path");
 const yt = require('youtube-mp3-downloader');
 const fetch = require('node-fetch');
 const Jimp = require('jimp');
-const { Howl, Howler } = require('howler');
-/*
-require('electron-reloader')(module, {
-    debug: true,
-    watchRenderer: true
-});
-*/
 
-var sound = new Howl({
-    src: ['2C76LbxsayY.mp3']
-});
 
 let config = new yt({
     "ffmpegPath": "ffmpeg.exe",
@@ -54,7 +44,8 @@ function createWindow() {
                         "name": "name",
                         "timestamp": "timestamp",
                         "length": "length",
-                        "playPause": "playPause"
+                        "playPause": "playPause",
+                        "volume": "0.50"
                     },
                     "otherInfo": {}
                 },
@@ -145,14 +136,3 @@ ipcMain.on('youtube_id', (event, data) => {
     video_download(data);
 })
 
-ipcMain.on('sound', (event, data) => {
-    if(data=='play') {
-        console.log('hey')
-        sound.play();
-    } else if(data=='pause') {
-        console.log('o');
-        sound.pause();
-    } else {
-        console.log('what')
-    }
-})
