@@ -99,19 +99,23 @@ playlist["general"]["songPlaying"]["playPause"] = "paused";
 fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
 
 youtube_id.addEventListener('input', () => {
-    while(songsDiv.firstChild) {
-        songsDiv.removeChild(songsDiv.lastChild);
+    if (youtube_id.value != "") {
+        while(songsDiv.firstChild) {
+            songsDiv.removeChild(songsDiv.lastChild);
+        }
+        console.log('changed');
+        ipcRenderer.send('youtube_id', youtube_id.value);
     }
-    console.log('changed');
-    ipcRenderer.send('youtube_id', youtube_id.value);
 });
 
 youtube_search.addEventListener('input', () => {
-    while(songsDiv.firstChild) {
-        songsDiv.removeChild(songsDiv.lastChild);
+    if (youtube_search.value != "") {
+        while(songsDiv.firstChild) {
+            songsDiv.removeChild(songsDiv.lastChild);
+        }
+        console.log('search');
+        ipcRenderer.send('youtube_search', youtube_search.value);
     }
-    console.log('search');
-    ipcRenderer.send('youtube_search', youtube_search.value);
 });
 
 

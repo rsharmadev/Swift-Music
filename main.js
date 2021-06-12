@@ -199,13 +199,13 @@ search_config.on("finished", async function(error, data) {
 });
 
 
-ipcMain.on('youtube_id', (event, data) => {
+ipcMain.on('youtube_id', async (event, data) => {
     if (data.includes("?v="))
     {
         var v_index = data.indexOf("?v=");
         data = data.substring(v_index + 3);
     }
-    translate_video_id(data);
+    await translate_video_id(data);
 });
 
 async function searcher(term) {
