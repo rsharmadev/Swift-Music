@@ -13,6 +13,7 @@ module.exports = {
         "placeholder": "#636363",
         "goodgray": "#484848",
         "altgray": "#292928",
+        "high-red": "#FF756C"
       }
     },
   },

@@ -135,3 +135,25 @@ input[type='text']::placeholder {
   * {
     font-family: 'Montserrat', sans-serif;
   }
+
+  @-webkit-keyframes rotation {
+		from {
+				-webkit-transform: rotate(0deg);
+		}
+		to {
+				-webkit-transform: rotate(359deg);
+		}
+}
+
+.loading {
+  -webkit-animation: rotation 1.5s infinite linear;
+}
+
+.redhov:hover {
+  background-color: #FF756C;
+  cursor: pointer;
+}
+.grayhov:hover {
+  background-color: #333533;
+  cursor: pointer;
+}
