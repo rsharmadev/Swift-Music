@@ -106,12 +106,25 @@ youtube_id.addEventListener('input', () => {
     ipcRenderer.send('youtube_id', youtube_id.value);
 });
 
-function songTemplate(id, name, length) {
+youtube_search.addEventListener('input', () => {
+    while(songsDiv.firstChild) {
+        songsDiv.removeChild(songsDiv.lastChild);
+    }
+    console.log('search');
+    ipcRenderer.send('youtube_search', youtube_search.value);
+});
+
+
+function songTemplate(id, name, length, thumbnail=null) {
     let div = document.createElement('div');
     let img = document.createElement('img');
     let p = document.createElement('p');
     let h1 = document.createElement('h1');
-    img.src = `${thumbnailPath}\\${id}.jpg`
+    if (thumbnail != null) {
+        img.src = thumbnail;
+    } else {
+        img.src = `${thumbnailPath}\\${id}.jpg`
+    }
     img.className = "w-20 h-20";
     p.className = "text-offwhite ml-8 specwidth truncate text-2xl";
     p.innerHTML = name;
@@ -125,6 +138,25 @@ function songTemplate(id, name, length) {
     songsDiv.appendChild(div);
     return div;
 }
+
+ipc.on('youtube_search', (event, data) => {
+    while(songsDiv.firstChild) {
+        songsDiv.removeChild(songsDiv.lastChild);
+    }
+    var information = data["stuff"];
+    let songDiv1 = songTemplate(information[0].id, information[0].name, information[0].length, thumbnail=information[0].thumbnail);
+    let songDiv2 = songTemplate(information[1].id, information[1].name, information[1].length, thumbnail=information[1].thumbnail);
+    let songDiv3 = songTemplate(information[2].id, information[2].name, information[2].length, thumbnail=information[2].thumbnail);
+    songDiv1.addEventListener('click', () => {
+        ipcRenderer.send('download_search_song', information[0].id);
+    });
+    songDiv2.addEventListener('click', () => {
+        ipcRenderer.send('download_search_song', information[1].id);
+    });
+    songDiv3.addEventListener('click', () => {
+        ipcRenderer.send('download_search_song', information[2].id);
+    });
+});
 
 
 loop.addEventListener('click', async() => {
@@ -145,6 +177,7 @@ ipc.on('youtube_id', (event, data) => {
         ipcRenderer.send('download_song', data['id']);
     });
 });
+
 
 home.addEventListener('click', () => {
     console.log('clicked');

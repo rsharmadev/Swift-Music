@@ -6,9 +6,6 @@ const fetch = require('node-fetch');
 const Jimp = require('jimp');
 const yts = require('yt-search');
 
-
-
-
 let userDataPath = app.getPath('userData');
 let playlistPath = path.join(userDataPath, '/playlist.json');
 let songsPath = path.join(userDataPath, '/songs');
@@ -21,6 +18,12 @@ let config = new yt({
     "ffmpegPath": "ffmpeg.exe",
     "outputPath": songsPath
 });
+
+let search_config = new yt({
+    "ffmpegPath": "ffmpeg.exe",
+    "outputPath": songsPath
+});
+
 
 let temp_storage = {
     "id": "",
@@ -151,9 +154,19 @@ async function translate_video_id(id) {
 
 }
 
+
 ipcMain.on('download_song', (event, data) => {
     video_download(data);
 })
+
+ipcMain.on('download_search_song', (event, data) => {
+    temp_storage["id"] = data;
+    video_search_download(data);
+})
+
+async function video_search_download(id) {
+    search_config.download(id, `${id}.mp3`);
+}
 
 config.on("finished", function(error, data) {
     console.log('clicked');
@@ -168,6 +181,23 @@ config.on("finished", function(error, data) {
     fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
 });
 
+search_config.on("finished", async function(error, data) {
+    console.log('clicked');
+    getImage(`https://img.youtube.com/vi/${temp_storage["id"]}/0.jpg`, temp_storage["id"]);
+    let video = await yts( { videoId: temp_storage["id"] })
+    temp_storage["name"] = video.title;
+    temp_storage["length"] = video.duration.timestamp;
+    console.log(data["video"]);
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    playlist['songs'][String(Date.now())] = {
+        id: temp_storage["id"],
+        name: temp_storage["name"],
+        length: temp_storage["length"]
+    }
+
+    fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+});
+
 
 ipcMain.on('youtube_id', (event, data) => {
     if (data.includes("?v="))
@@ -176,5 +206,30 @@ ipcMain.on('youtube_id', (event, data) => {
         data = data.substring(v_index + 3);
     }
     translate_video_id(data);
-})
+});
 
+async function searcher(term) {
+    let search_term = await yts(term);
+
+    let videos = search_term.videos.slice( 0, 3 );
+
+    var video_dict = []
+
+    videos.forEach( function (v) {
+        video_dict.push({
+            "id": v.videoId,
+            "name": v.title,
+            "length": v.timestamp,
+            "thumbnail": v.thumbnail
+        });
+    });
+
+    win.webContents.send('youtube_search', {
+        'stuff': video_dict
+    });
+}
+
+
+ipcMain.on('youtube_search', (event, data) => {
+    searcher(data);
+});
