@@ -32,6 +32,7 @@ const skipBtn = document.getElementById('skip');
 const timestamp = document.getElementById('timestamp');
 const volumeBar = document.getElementById('volumeBar');
 const time = document.getElementById('time');
+const loop = document.getElementById('loop');
 
 let length;
 
@@ -71,6 +72,25 @@ function update(firstrun = false) {
     }
 }
 
+
+
+
+function updater() {
+    //console.log('seeking');
+    let time = sound.seek();
+    // console.log('seeked');
+    var parts = playlist['general']['songPlaying']['length'].split(':');
+    var seconds = (parseInt(parts[0]) * 60) + parseInt(parts[1]);
+    // console.log(seconds);
+    // sound.seek((parseInt(playingBar.value)/100) * seconds);
+    playingBar.value = (time/seconds)*100;
+    timestamp.innerHTML = new Date(((parseInt(playingBar.value)/100) * seconds) * 1000).toISOString().substr(11, 8).substr(3);
+
+}
+
+let interval = setInterval(updater, 100);
+
+
 update(firstrun = true);
 while(songsDiv.firstChild) {
     songsDiv.removeChild(songsDiv.lastChild);
@@ -107,6 +127,14 @@ function songTemplate(id, name, length) {
 }
 
 
+loop.addEventListener('click', async() => {
+    console.log(!sound.loop());
+    if(sound.loop()) {
+        sound.loop(false);
+    } else {
+        sound.loop(true);
+    }
+});
 
 
 
