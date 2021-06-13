@@ -21,7 +21,8 @@ let thumbnailPath = path.join(userDataPath, '/thumbnails');
 let playlist = JSON.parse(fs.readFileSync(playlistPath));
 
 const youtube_id = document.getElementById('youtube_id');
-const songsDiv = document.getElementById('songsDiv'); 
+const songsDiv = document.getElementById('songsDiv');
+const songs_Lib_Div = document.getElementById('songs_lib_Div'); 
 const home = document.getElementById('home');
 const playingName = document.getElementById('playing');
 const playingImg = document.getElementById('playingImg');
@@ -33,6 +34,7 @@ const timestamp = document.getElementById('timestamp');
 const volumeBar = document.getElementById('volumeBar');
 const time = document.getElementById('time');
 const loop = document.getElementById('loop');
+let navsound = document.getElementById("navsound")
 
 let length;
 
@@ -93,9 +95,6 @@ let interval = setInterval(updater, 600);
 document.getElementById("refresh_img").style.display = "none";
 
 update(firstrun = true);
-while(songsDiv.firstChild) {
-    songsDiv.removeChild(songsDiv.lastChild);
-}
 playlist["general"]["songPlaying"]["playPause"] = "paused";
 fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
 
@@ -143,6 +142,90 @@ function songTemplate(id, name, length, thumbnail=null) {
     songsDiv.appendChild(div);
     return div;
 }
+
+function songLibTemplate(id, name, length) {
+    let div = document.createElement('div');
+    let img = document.createElement('img');
+    let h1 = document.createElement('h1');
+    let del_img = document.createElement('img');
+    let p = document.createElement('p');
+    let other_div = document.createElement('div');
+
+    img.src = `${thumbnailPath}\\${id}.jpg`;
+    img.className = "w-20 h-20";
+    p.className = "text-offwhite ml-8 specwidth truncate text-2xl";
+    p.innerHTML = name;
+    p.id = id;
+    h1.className = "text-high-yellow text-md ml-auto pr-3";
+    h1.innerHTML = length;
+    h1.id = id;
+    del_img.className = "w-7 mr-2 touch";
+    del_img.src = "../images/delete.svg";
+    del_img.id = id + "_delete";
+    other_div.className = "h-16 w-0.5 bg-white opacity-10 mx-6";
+    div.className = "w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4";
+    div.id = id;
+
+    div.appendChild(img);
+    div.appendChild(p);
+    div.appendChild(h1);
+    div.appendChild(other_div);
+    div.appendChild(del_img);
+
+    songs_Lib_Div.appendChild(div);
+    return div;
+}
+
+var deleteLibVar = function(idx) {
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    var id = idx["target"]["id"]
+    var shoulddelete = false;
+    if (id.indexOf("_delete") != -1) {
+        id = id.substr(0, id.indexOf("_delete"));
+        shoulddelete = true;
+    }
+    for(const [key, value] of Object.entries(playlist['songs'])) {
+        if (value["id"] == id) {
+            if (shoulddelete) {
+                delete playlist["songs"][key];
+                fs.unlinkSync(`${thumbnailPath}\\${id}.jpg`);
+                fs.unlinkSync(`${songsPath}\\${id}.mp3`);
+            } else {
+                playlist['general']['songPlaying'] = {
+                    id: playlist['songs'][key]['id'],
+                    unix: key,
+                    name: playlist['songs'][key]['name'],
+                    timestamp: "0",
+                    length: playlist['songs'][key]['length'],
+                    playPause: "paused",
+                    volume: playlist['general']['songPlaying']['volume']
+                }
+            }
+        }
+    }
+
+    fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+    console.log(playlist['general']['songPlaying']['playPause']);
+    if (!shoulddelete || id == playlist["general"]["songPlaying"]["id"]) {
+        sound.stop();
+        playBtn.src = '../images/play.svg';
+    }
+    update();
+    navsound.click();
+}
+
+navsound.addEventListener('click', () => {
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    while(songs_Lib_Div.firstChild) {
+        songs_Lib_Div.removeChild(songs_Lib_Div.lastChild);
+    }
+    for(const [key, value] of Object.entries(playlist['songs'])) {
+        songLibTemplate(value["id"], value["name"], value["length"]);
+        var div = document.getElementById(value["id"]);
+        div.addEventListener('click', deleteLibVar.bind(div));
+    }
+});
+
 
 ipc.on('youtube_search', (event, data) => {
     while(songsDiv.firstChild) {

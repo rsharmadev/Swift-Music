@@ -1,5 +1,5 @@
 let home2 = document.getElementById("home")
-let navsound = document.getElementById("navsound")
+//let navsound = document.getElementById("navsound")
 
 let homeimg = document.getElementById("homeimg")
 let navimg = document.getElementById("navimg")
