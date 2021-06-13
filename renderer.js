@@ -23,7 +23,7 @@ let playlist = JSON.parse(fs.readFileSync(playlistPath));
 const youtube_id = document.getElementById('youtube_id');
 const songsDiv = document.getElementById('songsDiv');
 const nextSongsDiv = document.getElementById('nextSongsDiv');
-const songs_Lib_Div = document.getElementById('songs_lib_Div'); 
+const songs_Lib_Div = document.getElementById('songs_lib_Div');
 const home = document.getElementById('home');
 const playingName = document.getElementById('playing');
 const playingImg = document.getElementById('playingImg');
@@ -42,7 +42,7 @@ let minimize_btn = document.getElementById("minimize_btn");
 let length;
 
 
-function nextSongTemplate(id, name, length, thumbnail=null) {
+function nextSongTemplate(id, name, length, thumbnail = null) {
     let div = document.createElement('div');
     let img = document.createElement('img');
     let p = document.createElement('p');
@@ -53,7 +53,7 @@ function nextSongTemplate(id, name, length, thumbnail=null) {
         img.src = `${thumbnailPath}\\${id}.jpg`
     }
     img.className = "w-14 h-14";
-    p.className = "text-offwhite ml-4 truncate text-lg w-64";
+    p.className = "text-offwhite ml-4 truncate text-lg w-32";
     p.innerHTML = name;
     h1.className = "text-high-yellow text-md ml-auto pl-5 pr-3";
     h1.innerHTML = length;
@@ -67,13 +67,13 @@ function nextSongTemplate(id, name, length, thumbnail=null) {
 }
 
 function update_next_songs() {
-    while(nextSongsDiv.firstChild) {
+    while (nextSongsDiv.firstChild) {
         nextSongsDiv.removeChild(nextSongsDiv.lastChild);
     }
     unix_thing = playlist["general"]["songPlaying"]["unix"];
 
     list_of_unix = [];
-    for(const [key, _] of Object.entries(playlist['songs'])) {
+    for (const [key, _] of Object.entries(playlist['songs'])) {
         list_of_unix.push(key);
     }
     console.log(list_of_unix);
@@ -92,9 +92,9 @@ function update_next_songs() {
 
 function update(firstrun = false) {
     volumeBar.value = playlist['general']['songPlaying']['volume'];
-    if(playlist['general']['songPlaying']['id'] == null || playlist['general']['songPlaying']['id'] == 'id') {
+    if (playlist['general']['songPlaying']['id'] == null || playlist['general']['songPlaying']['id'] == 'id') {
         console.log('what');
-        for(const [key, value] of Object.entries(playlist['songs'])) {
+        for (const [key, value] of Object.entries(playlist['songs'])) {
             playlist['general']['songPlaying'] = {
                 id: value['id'],
                 unix: key,
@@ -103,11 +103,11 @@ function update(firstrun = false) {
                 playPause: 'paused',
             }
             break;
-    
+
         }
-        
+
     } else {
-        
+
         playingName.innerHTML = playlist['general']['songPlaying']['name'];
         playingImg.src = `${thumbnailPath}\\${playlist['general']['songPlaying']['id']}.jpg`;
         console.log('here');
@@ -115,11 +115,11 @@ function update(firstrun = false) {
         playingBar.value = (parseInt(playlist['general']['songPlaying']['timestamp']) / parseInt(playlist['general']['songPlaying']['length'])) * 100;
         timestamp.innerHTML = playlist['general']['songPlaying']['timestamp'];
         time.innerHTML = playlist['general']['songPlaying']['length']
-        if(playlist['general']['songPlaying']['playPause'] == 'paused' || firstrun == true) {
+        if (playlist['general']['songPlaying']['playPause'] == 'paused' || firstrun == true) {
             sound = new Howl({
                 src: [`${songsPath}\\${playlist['general']['songPlaying']['id']}.mp3`],
                 html5: true,
-                volume: parseInt(playlist['general']['songPlaying']['volume'])/100
+                volume: parseInt(playlist['general']['songPlaying']['volume']) / 100
             });
             loop.src = "../images/repeat.svg";
         }
@@ -138,8 +138,8 @@ function updater() {
     var seconds = (parseInt(parts[0]) * 60) + parseInt(parts[1]);
     // console.log(seconds);
     // sound.seek((parseInt(playingBar.value)/100) * seconds);
-    playingBar.value = (time/seconds)*100;
-    timestamp.innerHTML = new Date(((parseInt(playingBar.value)/100) * seconds) * 1000).toISOString().substr(11, 8).substr(3);
+    playingBar.value = (time / seconds) * 100;
+    timestamp.innerHTML = new Date(((parseInt(playingBar.value) / 100) * seconds) * 1000).toISOString().substr(11, 8).substr(3);
 
 }
 
@@ -152,7 +152,7 @@ fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
 
 youtube_id.addEventListener('input', () => {
     if (youtube_id.value != "") {
-        while(songsDiv.firstChild) {
+        while (songsDiv.firstChild) {
             songsDiv.removeChild(songsDiv.lastChild);
         }
         console.log('changed');
@@ -162,7 +162,7 @@ youtube_id.addEventListener('input', () => {
 
 youtube_search.addEventListener('input', () => {
     if (youtube_search.value != "") {
-        while(songsDiv.firstChild) {
+        while (songsDiv.firstChild) {
             songsDiv.removeChild(songsDiv.lastChild);
         }
         console.log('search');
@@ -178,7 +178,7 @@ minimize_btn.addEventListener('click', () => {
     ipcRenderer.send('minimize', "");
 });
 
-function songTemplate(id, name, length, thumbnail=null) {
+function songTemplate(id, name, length, thumbnail = null) {
     let div = document.createElement('div');
     let img = document.createElement('img');
     let p = document.createElement('p');
@@ -235,7 +235,7 @@ function songLibTemplate(id, name, length) {
     return div;
 }
 
-var deleteLibVar = function(idx) {
+var deleteLibVar = function (idx) {
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     var id = idx["target"]["id"]
     var shoulddelete = false;
@@ -243,7 +243,7 @@ var deleteLibVar = function(idx) {
         id = id.substr(0, id.indexOf("_delete"));
         shoulddelete = true;
     }
-    for(const [key, value] of Object.entries(playlist['songs'])) {
+    for (const [key, value] of Object.entries(playlist['songs'])) {
         if (value["id"] == id) {
             if (shoulddelete) {
                 delete playlist["songs"][key];
@@ -275,10 +275,10 @@ var deleteLibVar = function(idx) {
 
 navsound.addEventListener('click', () => {
     playlist = JSON.parse(fs.readFileSync(playlistPath));
-    while(songs_Lib_Div.firstChild) {
+    while (songs_Lib_Div.firstChild) {
         songs_Lib_Div.removeChild(songs_Lib_Div.lastChild);
     }
-    for(const [key, value] of Object.entries(playlist['songs'])) {
+    for (const [key, value] of Object.entries(playlist['songs'])) {
         songLibTemplate(value["id"], value["name"], value["length"]);
         var div = document.getElementById(value["id"]);
         div.addEventListener('click', deleteLibVar.bind(div));
@@ -287,13 +287,13 @@ navsound.addEventListener('click', () => {
 
 
 ipc.on('youtube_search', (event, data) => {
-    while(songsDiv.firstChild) {
+    while (songsDiv.firstChild) {
         songsDiv.removeChild(songsDiv.lastChild);
     }
     var information = data["stuff"];
-    let songDiv1 = songTemplate(information[0].id, information[0].name, information[0].length, thumbnail=information[0].thumbnail);
-    let songDiv2 = songTemplate(information[1].id, information[1].name, information[1].length, thumbnail=information[1].thumbnail);
-    let songDiv3 = songTemplate(information[2].id, information[2].name, information[2].length, thumbnail=information[2].thumbnail);
+    let songDiv1 = songTemplate(information[0].id, information[0].name, information[0].length, thumbnail = information[0].thumbnail);
+    let songDiv2 = songTemplate(information[1].id, information[1].name, information[1].length, thumbnail = information[1].thumbnail);
+    let songDiv3 = songTemplate(information[2].id, information[2].name, information[2].length, thumbnail = information[2].thumbnail);
     songDiv1.addEventListener('click', () => {
         ipcRenderer.send('download_search_song', information[0].id);
     });
@@ -306,9 +306,9 @@ ipc.on('youtube_search', (event, data) => {
 });
 
 
-loop.addEventListener('click', async() => {
+loop.addEventListener('click', async () => {
     console.log(!sound.loop());
-    if(sound.loop()) {
+    if (sound.loop()) {
         sound.loop(false);
         loop.src = "../images/repeat.svg";
     } else {
@@ -340,18 +340,18 @@ home.addEventListener('click', () => {
     console.log('clicked');
 })
 
-playBtn.addEventListener('click', async() => {
+playBtn.addEventListener('click', async () => {
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     console.log(`${songsPath}/${playlist['general']['songPlaying']['id']}.mp3`);
-    
+
     console.log(playlist['general']['songPlaying']['playPause']);
-    if(playlist['general']['songPlaying']['playPause'] == 'paused') {
+    if (playlist['general']['songPlaying']['playPause'] == 'paused') {
         playBtn.src = '../images/pause.svg';
 
         playlist['general']['songPlaying']['playPause'] = 'playing';
         sound.play();
         // ipcRenderer.send('sound', 'play');
-    } else if(playlist['general']['songPlaying']['playPause'] == 'playing') {
+    } else if (playlist['general']['songPlaying']['playPause'] == 'playing') {
         playBtn.src = '../images/play.svg';
         playlist['general']['songPlaying']['playPause'] = 'paused';
         console.log('i am here.');
@@ -365,17 +365,17 @@ playBtn.addEventListener('click', async() => {
     // resume or pause player;
 });
 
-backBtn.addEventListener('click', async() => {
-    if(playlist['general']['songPlaying']['playPause'] != 'paused') {
+backBtn.addEventListener('click', async () => {
+    if (playlist['general']['songPlaying']['playPause'] != 'paused') {
         playBtn.click();
     }
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     list_of_unix = [];
-    for(const [key, _] of Object.entries(playlist['songs'])) {
+    for (const [key, _] of Object.entries(playlist['songs'])) {
         list_of_unix.push(key);
     }
     let newUnixIndex = list_of_unix.indexOf(playlist['general']['songPlaying']['unix']) - 1;
-    if(newUnixIndex < 0) {
+    if (newUnixIndex < 0) {
         newUnixIndex = list_of_unix.length - 1;
     } else if (newUnixIndex > list_of_unix.length - 1) {
         newUnixIndex = 0;
@@ -396,17 +396,17 @@ backBtn.addEventListener('click', async() => {
 
 });
 
-skipBtn.addEventListener('click', async() => {
-    if(playlist['general']['songPlaying']['playPause'] != 'paused') {
+skipBtn.addEventListener('click', async () => {
+    if (playlist['general']['songPlaying']['playPause'] != 'paused') {
         playBtn.click();
     }
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     list_of_unix = [];
-    for(const [key, _] of Object.entries(playlist['songs'])) {
+    for (const [key, _] of Object.entries(playlist['songs'])) {
         list_of_unix.push(key);
     }
     let newUnixIndex = list_of_unix.indexOf(playlist['general']['songPlaying']['unix']) + 1;
-    if(newUnixIndex < 0) {
+    if (newUnixIndex < 0) {
         newUnixIndex = list_of_unix.length - 1;
     } else if (newUnixIndex > list_of_unix.length - 1) {
         newUnixIndex = 0;
@@ -427,17 +427,17 @@ skipBtn.addEventListener('click', async() => {
 
 });
 
-volumeBar.addEventListener('change', async() => {
+volumeBar.addEventListener('change', async () => {
     console.log(volumeBar.value)
     playlist['general']['songPlaying']['volume'] = volumeBar.value;
-    sound.volume(parseInt(volumeBar.value)/100)
+    sound.volume(parseInt(volumeBar.value) / 100)
     fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
 });
 
-playingBar.addEventListener('change', async() => {
+playingBar.addEventListener('change', async () => {
     var parts = playlist['general']['songPlaying']['length'].split(':');
     var seconds = (parseInt(parts[0]) * 60) + parseInt(parts[1]);
     console.log(seconds);
-    sound.seek((parseInt(playingBar.value)/100) * seconds);
-    timestamp.innerHTML = new Date(((parseInt(playingBar.value)/100) * seconds) * 1000).toISOString().substr(11, 8).substr(3);
+    sound.seek((parseInt(playingBar.value) / 100) * seconds);
+    timestamp.innerHTML = new Date(((parseInt(playingBar.value) / 100) * seconds) * 1000).toISOString().substr(11, 8).substr(3);
 });

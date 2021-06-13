@@ -44,7 +44,7 @@ function createWindow() {
         frame: false,
         icon: "public\\images\\logo.png"
     })
-    win.setResizable(false);
+    win.setResizable(true);
     //win.setMenu(null);
 
     try {
@@ -78,7 +78,7 @@ function createWindow() {
         fs.mkdirSync(songsPath);
         console.log('new songs');
     }
-    
+
     try {
         fs.readdirSync(thumbnailPath);
         console.log('thumbnail found');
@@ -89,18 +89,18 @@ function createWindow() {
 
     // Load the index.html of the app.
     win.loadFile(path.resolve(__dirname, 'public/build/index.html'))
-  
+
     // Open the DevTools.
     //win.webContents.openDevTools()
 
 }
-  
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 // This method is equivalent to 'app.on('ready', function())'
 app.whenReady().then(createWindow)
-  
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
     // On macOS it is common for applications and their 
@@ -114,7 +114,7 @@ app.on('window-all-closed', () => {
 async function getImage(url, id) {
     const response = await fetch(url);
     const buffer = await response.buffer();
-    fs.writeFile(`${thumbnailPath}\\${id}.jpg`, buffer, async() => {
+    fs.writeFile(`${thumbnailPath}\\${id}.jpg`, buffer, async () => {
         await resize(`${thumbnailPath}\\${id}.jpg`, [1024, 1024]);
     })
 }
@@ -150,7 +150,7 @@ async function video_download(id) {
 }
 
 async function translate_video_id(id) {
-    let video = await yts( { videoId: id })
+    let video = await yts({ videoId: id })
     await getImage(`https://img.youtube.com/vi/${id}/0.jpg`, id);
     saveToJson(id, video.title, video.duration.timestamp);
 
@@ -176,7 +176,7 @@ async function video_search_download(id) {
     search_config.download(id, `${id}.mp3`);
 }
 
-config.on("finished", function(error, data) {
+config.on("finished", function (error, data) {
     console.log('clicked');
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     playlist['songs'][String(Date.now())] = {
@@ -192,10 +192,10 @@ config.on("finished", function(error, data) {
     });
 });
 
-search_config.on("finished", async function(error, data) {
+search_config.on("finished", async function (error, data) {
     console.log('clicked');
     getImage(`https://img.youtube.com/vi/${temp_storage["id"]}/0.jpg`, temp_storage["id"]);
-    let video = await yts( { videoId: temp_storage["id"] })
+    let video = await yts({ videoId: temp_storage["id"] })
     temp_storage["name"] = video.title;
     temp_storage["length"] = video.duration.timestamp;
     console.log(data["video"]);
@@ -214,8 +214,7 @@ search_config.on("finished", async function(error, data) {
 
 
 ipcMain.on('youtube_id', async (event, data) => {
-    if (data.includes("?v="))
-    {
+    if (data.includes("?v=")) {
         var v_index = data.indexOf("?v=");
         data = data.substring(v_index + 3);
     }
@@ -225,11 +224,11 @@ ipcMain.on('youtube_id', async (event, data) => {
 async function searcher(term) {
     let search_term = await yts(term);
 
-    let videos = search_term.videos.slice( 0, 3 );
+    let videos = search_term.videos.slice(0, 3);
 
     var video_dict = []
 
-    videos.forEach( function (v) {
+    videos.forEach(function (v) {
         video_dict.push({
             "id": v.videoId,
             "name": v.title,
