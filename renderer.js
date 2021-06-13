@@ -238,7 +238,51 @@ youtube_search.addEventListener('input', () => {
     }
 });
 
+function swap(arr, firstIndex, secondIndex){
+    var temp = arr[firstIndex];
+    arr[firstIndex] = arr[secondIndex];
+    arr[secondIndex] = temp;
+    }
+
+function bubbleSortAlgo(arraaytest){
+    var len = arraaytest.length,
+    i, j, stop;
+    for (i=0; i < len; i++){
+        for (j=0, stop=len-i; j < stop; j++){
+            if (arraaytest[j] > arraaytest[j+1]){
+                swap(arraaytest, j, j+1);
+            }
+        }
+    }
+    return arraaytest;
+}
+
+function restore_order() {
+    list_of_songs = [];
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    for(const [key, value] of Object.entries(playlist['songs'])) {
+        list_of_songs.push(key);
+    }
+
+    list_of_songs = bubbleSortAlgo(list_of_songs);
+
+    temp_songs = {}
+
+    for (var i = 0; i < list_of_songs.length; i++) {
+        temp_songs[list_of_songs[i]] = {
+            id: playlist["songs"][list_of_songs[i]]["id"],
+            name: playlist["songs"][list_of_songs[i]]["name"],
+            length: playlist["songs"][list_of_songs[i]]["length"]
+        }
+    }
+
+    playlist["songs"] = temp_songs;
+    fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+}
+
+
 exit_btn.addEventListener('click', () => {
+    restore_order();
     ipcRenderer.send('quit', "");
 });
 
