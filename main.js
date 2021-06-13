@@ -44,7 +44,7 @@ function createWindow() {
         frame: false,
         icon: "public\\images\\logo.png"
     })
-    win.setResizable(true);
+    win.setResizable(false);
     //win.setMenu(null);
 
     try {
