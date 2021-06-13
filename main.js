@@ -17,23 +17,23 @@ const timeObj = new Date();
 
 const rpc = new RPC.Client({
     transport: "ipc"
-  })
-  
-  
-function richPresence() {
-rpc.on('ready', () => {
-    rpc.setActivity({
-    details: "Listening To MUSIC" ,
-    startTimestamp: timeObj,
-    largeImageKey: "swift",
-    largeImageText: "Swift Music"
-    })
-    console.log("Ready!");
 })
 
-rpc.login({
-    clientId: "853556280186765332"
-})
+
+function richPresence() {
+    rpc.on('ready', () => {
+        rpc.setActivity({
+            details: "Listening To MUSIC",
+            startTimestamp: timeObj,
+            largeImageKey: "swift",
+            largeImageText: "Swift Music"
+        })
+        console.log("Ready!");
+    })
+
+    rpc.login({
+        clientId: "853556280186765332"
+    })
 }
 
 richPresence();
@@ -58,8 +58,8 @@ let temp_storage = {
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
-        width: 1660,
-        height: 1000,
+        width: 1360,
+        height: 800,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
@@ -194,7 +194,7 @@ ipcMain.on('download_song', (event, data) => {
 
 ipcMain.on('status', (_, data) => {
     rpc.setActivity({
-        details: data ,
+        details: data,
         startTimestamp: timeObj,
         largeImageKey: "swift",
         largeImageText: "Swift Music"
@@ -263,7 +263,7 @@ ipcMain.on('youtube_id', async (event, data) => {
 
 async function searcher(term) {
     rpc.setActivity({
-        details: "Searching for new songs!" ,
+        details: "Searching for new songs!",
         startTimestamp: timeObj,
         largeImageKey: "swift",
         largeImageText: "Swift Music"

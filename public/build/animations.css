@@ -27,7 +27,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .slidercustom1 {
       overflow: hidden;
-      width: 40rem;
+      width: 30rem;
       -webkit-appearance: none;
       background-color: #484848;
       cursor: pointer;
@@ -46,7 +46,7 @@
       height: 0px;
       cursor: pointer;
       background: #434343;
-      box-shadow: -40rem 0 0 40rem #F5CB5C;
+      box-shadow: -30rem 0 0 30rem #F5CB5C;
     }
 
 }
@@ -99,19 +99,25 @@ input[type='text']::placeholder {
 }
 
 .specwidth {
-    width: 800px;
+    width: 550px;
+    max-width: 550px;
+    min-width: 550px;
 }
 
 .hovback:hover {
     background-color: #272727;
     cursor: pointer;
 }
+.hovback2:hover {
+  background-color: #2e2e2e;
+  cursor: pointer;
+}
 
 .specheight {
-    height:700px;
+    height:500px;
 }
 .specheight2 {
-  height:780px;
+  height:580px;
 }
 
 .specheight::-webkit-scrollbar {
