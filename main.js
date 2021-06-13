@@ -41,7 +41,8 @@ function createWindow() {
             enableRemoteModule: true,
             contextIsolation: false
         },
-        frame: false
+        frame: false,
+        icon: "public\\images\\logo.png"
     })
     win.setResizable(false);
     //win.setMenu(null);
