@@ -303,8 +303,49 @@ function songLibTemplate(id, name, length, unix) {
         delSong(unix, id);
     });
 
+    img.addEventListener('click', () => {
+        playSong(unix, id);
+    });
+    h1.addEventListener('click', () => {
+        playSong(unix, id);
+    });
+    p.addEventListener('click', () => {
+        playSong(unix, id);
+    });
+    div.addEventListener('click', () => {
+        playSong(unix, id);
+    });
+
     songs_Lib_Div.appendChild(div);
     return div;
+}
+
+function playSong(unix, id) {
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    console.log(unix);
+    let count = 0;
+    for(const [key, value] of Object.entries(playlist['songs'])) {
+        if(value['id'] == playlist['songs'][unix]['id']) {
+            count += 1;
+        }
+    }
+    if(playlist['general']['songPlaying']['unix'] != unix && count==1) {
+        playlist['general']['songPlaying'] = {
+            id: playlist['songs'][unix]['id'],
+            unix: unix,
+            name: playlist['songs'][unix]['name'],
+            timestamp: "0",
+            length: playlist['songs'][unix]['length'],
+            playPause: "paused",
+            volume: playlist['general']['songPlaying']['volume']
+        }
+    }
+    fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+    sound.stop();
+    playBtn.src = '../images/play.svg';
+    updateSongs();
+    update();
+    navsound.click();
 }
 
 
