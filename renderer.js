@@ -68,6 +68,7 @@ function update(firstrun = false) {
                 html5: true,
                 volume: parseInt(playlist['general']['songPlaying']['volume'])/100
             });
+            loop.src = "../images/repeat.svg";
         }
     }
 }
@@ -167,8 +168,10 @@ loop.addEventListener('click', async() => {
     console.log(!sound.loop());
     if(sound.loop()) {
         sound.loop(false);
+        loop.src = "../images/repeat.svg";
     } else {
         sound.loop(true);
+        loop.src = "../images/repeatyellow.svg";
     }
 });
 
