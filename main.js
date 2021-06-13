@@ -31,19 +31,20 @@ let temp_storage = {
     "length": ""
 }
 
-
-
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
-        width: 1650,
+        width: 1660,
         height: 1000,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false
-        }
+        },
+        frame: false
     })
+    win.setResizable(false);
+    //win.setMenu(null);
 
     try {
         playlist = JSON.parse(fs.readFileSync(playlistPath));
@@ -89,7 +90,7 @@ function createWindow() {
     win.loadFile(path.resolve(__dirname, 'public/build/index.html'))
   
     // Open the DevTools.
-    win.webContents.openDevTools()
+    //win.webContents.openDevTools()
 
 }
   
@@ -241,7 +242,14 @@ async function searcher(term) {
     });
 }
 
-
 ipcMain.on('youtube_search', (event, data) => {
     searcher(data);
+});
+
+ipcMain.on('quit', (event, data) => {
+    app.quit();
+});
+
+ipcMain.on('minimize', (event, data) => {
+    BrowserWindow.getFocusedWindow().minimize();
 });

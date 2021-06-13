@@ -22,6 +22,7 @@ let playlist = JSON.parse(fs.readFileSync(playlistPath));
 
 const youtube_id = document.getElementById('youtube_id');
 const songsDiv = document.getElementById('songsDiv');
+const nextSongsDiv = document.getElementById('nextSongsDiv');
 const songs_Lib_Div = document.getElementById('songs_lib_Div'); 
 const home = document.getElementById('home');
 const playingName = document.getElementById('playing');
@@ -34,9 +35,59 @@ const timestamp = document.getElementById('timestamp');
 const volumeBar = document.getElementById('volumeBar');
 const time = document.getElementById('time');
 const loop = document.getElementById('loop');
-let navsound = document.getElementById("navsound")
+let navsound = document.getElementById("navsound");
+let exit_btn = document.getElementById("exit_btn");
+let minimize_btn = document.getElementById("minimize_btn");
 
 let length;
+
+
+function nextSongTemplate(id, name, length, thumbnail=null) {
+    let div = document.createElement('div');
+    let img = document.createElement('img');
+    let p = document.createElement('p');
+    let h1 = document.createElement('h1');
+    if (thumbnail != null) {
+        img.src = thumbnail;
+    } else {
+        img.src = `${thumbnailPath}\\${id}.jpg`
+    }
+    img.className = "w-14 h-14";
+    p.className = "text-offwhite ml-4 truncate text-lg w-64";
+    p.innerHTML = name;
+    h1.className = "text-high-yellow text-md ml-auto pl-5 pr-3";
+    h1.innerHTML = length;
+    div.className = "w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4";
+    div.id = id;
+    div.appendChild(img);
+    div.appendChild(p);
+    div.appendChild(h1);
+    nextSongsDiv.appendChild(div);
+    return div;
+}
+
+function update_next_songs() {
+    while(nextSongsDiv.firstChild) {
+        nextSongsDiv.removeChild(nextSongsDiv.lastChild);
+    }
+    unix_thing = playlist["general"]["songPlaying"]["unix"];
+
+    list_of_unix = [];
+    for(const [key, _] of Object.entries(playlist['songs'])) {
+        list_of_unix.push(key);
+    }
+    console.log(list_of_unix);
+
+    let newUnixIndex = list_of_unix.indexOf(unix_thing);
+    console.log(newUnixIndex);
+    list_of_unix = list_of_unix.slice(newUnixIndex + 1);
+    console.log(list_of_unix);
+
+    for (var x = 0; x < list_of_unix.length; x++) {
+        nextSongTemplate(playlist["songs"][list_of_unix[x]]["id"], playlist["songs"][list_of_unix[x]]["name"], playlist["songs"][list_of_unix[x]]["length"]);
+    }
+}
+
 
 
 function update(firstrun = false) {
@@ -72,6 +123,7 @@ function update(firstrun = false) {
             });
             loop.src = "../images/repeat.svg";
         }
+        update_next_songs();
     }
 }
 
@@ -118,6 +170,13 @@ youtube_search.addEventListener('input', () => {
     }
 });
 
+exit_btn.addEventListener('click', () => {
+    ipcRenderer.send('quit', "");
+});
+
+minimize_btn.addEventListener('click', () => {
+    ipcRenderer.send('minimize', "");
+});
 
 function songTemplate(id, name, length, thumbnail=null) {
     let div = document.createElement('div');

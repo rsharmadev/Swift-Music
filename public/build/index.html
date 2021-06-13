@@ -150,9 +150,9 @@
                         <input type="text" placeholder="Insert party IP"
                             class="bg-goodgray px-3 text-white w-full mt-5 py-2.5 font-bold rounded-md">
                         <p class="text-high-yellow py-1.5 text-sm">Listening with 3 people*</p>
-                        <h1 class="text-2xl font-medium text-offwhite pt-16 pb-4">Queued Songs</h1>
-                        <div id='songsDiv' class="specheight overflow-y-auto pr-3">
-                            <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
+                        <h1 class="text-2xl font-medium text-offwhite pt-16 pb-4">Next Songs</h1>
+                        <div id='nextSongsDiv' class="specheight overflow-y-auto pr-3">
+                            <!-- <div class="w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4">
                                 <img src="../images/clairo.jpg" class="w-14 h-14">
                                 <p class="text-offwhite ml-4 truncate text-lg">
                                     Clairo
@@ -207,7 +207,7 @@
                                     Clairo
                                     - Sofia</p>
                                 <h1 class="text-high-yellow text-md ml-auto pl-5 pr-3">3:12</h1>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
             </section>
@@ -234,8 +234,9 @@
 
         <div class="absolute t-0 w-full">
             <div class="relative flex w-full">
-                <img class="ml-auto w-9 px-2 py-1 grayhov" src="../images/minus.svg">
-                <img class="w-9 px-2 py-1 redhov" src="../images/close.svg">
+                <span class="w-full" style="-webkit-app-region: drag"></span>
+                <img id="minimize_btn" class="ml-auto w-9 px-2 py-1 grayhov" src="../images/minus.svg">
+                <img id="exit_btn" class="w-9 px-2 py-1 redhov" src="../images/close.svg">
             </div>
         </div>
 
