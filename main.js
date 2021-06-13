@@ -5,7 +5,7 @@ const yt = require('youtube-mp3-downloader');
 const fetch = require('node-fetch');
 const Jimp = require('jimp');
 const yts = require('yt-search');
-
+const RPC = require('discord-rpc');
 let userDataPath = app.getPath('userData');
 let playlistPath = path.join(userDataPath, '/playlist.json');
 let songsPath = path.join(userDataPath, '/songs');
@@ -13,6 +13,30 @@ let thumbnailPath = path.join(userDataPath, '/thumbnails');
 let playlist;
 // console.log(userDataPath);
 let win;
+const timeObj = new Date();
+
+const rpc = new RPC.Client({
+    transport: "ipc"
+  })
+  
+  
+function richPresence() {
+rpc.on('ready', () => {
+    rpc.setActivity({
+    details: "Listening To MUSIC" ,
+    startTimestamp: timeObj,
+    largeImageKey: "swift",
+    largeImageText: "Swift Music"
+    })
+    console.log("Ready!");
+})
+
+rpc.login({
+    clientId: "853556280186765332"
+})
+}
+
+richPresence();
 
 let config = new yt({
     "ffmpegPath": "ffmpeg.exe",
@@ -164,6 +188,22 @@ ipcMain.on('download_song', (event, data) => {
     video_download(data);
 })
 
+
+
+
+
+ipcMain.on('status', (_, data) => {
+    rpc.setActivity({
+        details: data ,
+        startTimestamp: timeObj,
+        largeImageKey: "swift",
+        largeImageText: "Swift Music"
+    })
+})
+
+
+
+
 ipcMain.on('download_search_song', (event, data) => {
     win.webContents.send("show_loading", {
         "": ""
@@ -222,6 +262,12 @@ ipcMain.on('youtube_id', async (event, data) => {
 });
 
 async function searcher(term) {
+    rpc.setActivity({
+        details: "Searching for new songs!" ,
+        startTimestamp: timeObj,
+        largeImageKey: "swift",
+        largeImageText: "Swift Music"
+    })
     let search_term = await yts(term);
 
     let videos = search_term.videos.slice(0, 3);

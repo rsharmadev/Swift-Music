@@ -28,11 +28,13 @@ const home = document.getElementById('home');
 const playingName = document.getElementById('playing');
 const playingImg = document.getElementById('playingImg');
 const playingBar = document.getElementById('playingBar');
+const shuffleBtn = document.getElementById('shuffle');
 const playBtn = document.getElementById('play');
 const backBtn = document.getElementById('back');
 const skipBtn = document.getElementById('skip');
 const timestamp = document.getElementById('timestamp');
 const volumeBar = document.getElementById('volumeBar');
+const volIcon = document.getElementById('volIcon');
 const time = document.getElementById('time');
 const loop = document.getElementById('loop');
 let navsound = document.getElementById("navsound");
@@ -42,7 +44,28 @@ let minimize_btn = document.getElementById("minimize_btn");
 let length;
 
 
-function nextSongTemplate(id, name, length, thumbnail = null) {
+/*
+function forcePlay(unix) {
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    if (playlist['general']['songPlaying']['playPause'] != 'paused') {
+        playBtn.click();
+    }
+    playlist['general']['songPlaying'] = {
+        id: playlist['songs'][unix]['id'],
+        unix: unix,
+        name: playlist['songs'][unix]['name'],
+        timestamp: "0",
+        length: playlist['songs'][unix]['length'],
+        playPause: "paused",
+        volume: playlist['general']['songPlaying']['volume']
+    }
+    fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+    update()
+    sound.play();
+}
+*/
+
+function nextSongTemplate(id, name, length, unix, thumbnail = null) {
     let div = document.createElement('div');
     let img = document.createElement('img');
     let p = document.createElement('p');
@@ -59,6 +82,17 @@ function nextSongTemplate(id, name, length, thumbnail = null) {
     h1.innerHTML = length;
     div.className = "w-full bg-bggray rounded-md px-5 py-4 flex flex-row items-center mb-4";
     div.id = id;
+    div.setAttribute('unix', unix);
+    div.addEventListener('click', async() => {
+        let playingCorrect = false;
+        while(!playingCorrect) {
+            skipBtn.click();
+            if(playlist['general']['songPlaying']['unix'] == unix) {
+                playingCorrect = true;
+                playBtn.click();
+            }
+        }
+    });
     div.appendChild(img);
     div.appendChild(p);
     div.appendChild(h1);
@@ -83,8 +117,13 @@ function update_next_songs() {
     list_of_unix = list_of_unix.slice(newUnixIndex + 1);
     console.log(list_of_unix);
 
+    /*
     for (var x = 0; x < list_of_unix.length; x++) {
         nextSongTemplate(playlist["songs"][list_of_unix[x]]["id"], playlist["songs"][list_of_unix[x]]["name"], playlist["songs"][list_of_unix[x]]["length"]);
+    }
+    */
+    for(var i of list_of_unix) {
+        nextSongTemplate(playlist['songs'][i]['id'], playlist['songs'][i]['name'], playlist['songs'][i]['length'], i)
     }
 }
 
@@ -121,7 +160,11 @@ function update(firstrun = false) {
                 html5: true,
                 volume: parseInt(playlist['general']['songPlaying']['volume']) / 100
             });
-            loop.src = "../images/repeat.svg";
+            if(sound.loop()) {
+                loop.src = "../images/repeatyellow.svg";
+            } else {
+                loop.src = "../images/repeat.svg";
+            }
         }
         update_next_songs();
     }
@@ -141,10 +184,35 @@ function updater() {
     playingBar.value = (time / seconds) * 100;
     timestamp.innerHTML = new Date(((parseInt(playingBar.value) / 100) * seconds) * 1000).toISOString().substr(11, 8).substr(3);
 
+
 }
+
+
 
 let interval = setInterval(updater, 600);
 document.getElementById("refresh_img").style.display = "none";
+
+
+function updateSongs() {
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    list_of_songs = [playlist['general']['songPlaying']['id']]
+    for(const [key, value] of Object.entries(playlist['songs'])) {
+        list_of_songs.push(value['id']);
+    }
+    fs.readdirSync(songsPath).forEach(name => {
+        console.log(name)
+        if(!list_of_songs.includes(name.replace('.mp3', ''))) {
+            fs.unlinkSync(`${songsPath}\\${name}`);
+        }
+    });
+    fs.readdirSync(thumbnailPath).forEach(name => {
+        if(!list_of_songs.includes(name.replace('.jpg', ''))) {
+            fs.unlinkSync(`${thumbnailPath}\\${name}`);
+        }
+    });
+}
+
+
 
 update(firstrun = true);
 playlist["general"]["songPlaying"]["playPause"] = "paused";
@@ -202,7 +270,7 @@ function songTemplate(id, name, length, thumbnail = null) {
     return div;
 }
 
-function songLibTemplate(id, name, length) {
+function songLibTemplate(id, name, length, unix) {
     let div = document.createElement('div');
     let img = document.createElement('img');
     let h1 = document.createElement('h1');
@@ -224,18 +292,46 @@ function songLibTemplate(id, name, length) {
     other_div.className = "h-16 w-0.5 bg-white opacity-10 mx-6";
     div.className = "w-full bg-darkgray rounded-md px-5 py-4 flex flex-row items-center hovback mb-4";
     div.id = id;
+    div.setAttribute('unix', unix)
 
     div.appendChild(img);
     div.appendChild(p);
     div.appendChild(h1);
     div.appendChild(other_div);
     div.appendChild(del_img);
+    del_img.addEventListener('click', () => {
+        delSong(unix, id);
+    });
 
     songs_Lib_Div.appendChild(div);
     return div;
 }
 
+
+function delSong(unix, id) {
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    console.log(unix);
+    let count = 0;
+    for(const [key, value] of Object.entries(playlist['songs'])) {
+        if(value['id'] == playlist['songs'][unix]['id']) {
+            count += 1;
+
+        }
+    }
+    if(playlist['general']['songPlaying']['unix'] != unix && count==1) {
+        fs.unlinkSync(`${thumbnailPath}\\${id}.jpg`);
+        fs.unlinkSync(`${songsPath}\\${id}.mp3`);
+    }
+    delete playlist['songs'][unix];
+    fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+    updateSongs();
+    navsound.click();
+}
+
+
+/*
 var deleteLibVar = function (idx) {
+    console.log(idx);
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     var id = idx["target"]["id"]
     var shoulddelete = false;
@@ -247,8 +343,10 @@ var deleteLibVar = function (idx) {
         if (value["id"] == id) {
             if (shoulddelete) {
                 delete playlist["songs"][key];
-                fs.unlinkSync(`${thumbnailPath}\\${id}.jpg`);
-                fs.unlinkSync(`${songsPath}\\${id}.mp3`);
+                if(playlist['general']['songPlaying']['id'] != id) {
+                    fs.unlinkSync(`${thumbnailPath}\\${id}.jpg`);
+                    fs.unlinkSync(`${songsPath}\\${id}.mp3`);
+                }
             } else {
                 playlist['general']['songPlaying'] = {
                     id: playlist['songs'][key]['id'],
@@ -273,17 +371,20 @@ var deleteLibVar = function (idx) {
     navsound.click();
 }
 
+*/
+
 navsound.addEventListener('click', () => {
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     while (songs_Lib_Div.firstChild) {
         songs_Lib_Div.removeChild(songs_Lib_Div.lastChild);
     }
     for (const [key, value] of Object.entries(playlist['songs'])) {
-        songLibTemplate(value["id"], value["name"], value["length"]);
+        songLibTemplate(value["id"], value["name"], value["length"], key);
         var div = document.getElementById(value["id"]);
-        div.addEventListener('click', deleteLibVar.bind(div));
+        // div.addEventListener('click', deleteLibVar.bind(div));
     }
 });
+
 
 
 ipc.on('youtube_search', (event, data) => {
@@ -342,6 +443,7 @@ home.addEventListener('click', () => {
 
 playBtn.addEventListener('click', async () => {
     playlist = JSON.parse(fs.readFileSync(playlistPath));
+    console.log(playlist);
     console.log(`${songsPath}/${playlist['general']['songPlaying']['id']}.mp3`);
 
     console.log(playlist['general']['songPlaying']['playPause']);
@@ -350,13 +452,13 @@ playBtn.addEventListener('click', async () => {
 
         playlist['general']['songPlaying']['playPause'] = 'playing';
         sound.play();
-        // ipcRenderer.send('sound', 'play');
+        ipcRenderer.send('status', `Listening to ${playlist['general']['songPlaying']['name']}`);
     } else if (playlist['general']['songPlaying']['playPause'] == 'playing') {
         playBtn.src = '../images/play.svg';
         playlist['general']['songPlaying']['playPause'] = 'paused';
         console.log('i am here.');
         sound.pause()
-        // ipcRenderer.send('sound', 'pause');
+        ipcRenderer.send('status', 'Music Paused');
     } else {
         console.log('what');
     }
@@ -427,14 +529,65 @@ skipBtn.addEventListener('click', async () => {
 
 });
 
-volumeBar.addEventListener('change', async () => {
+function shufflelol() {
+    console.log('hey')
+    playlist = JSON.parse(fs.readFileSync(playlistPath));
+    let originalPlaylist = playlist['songs'];
+    originalList = [];
+    let a = {};
+    aList = [];
+    let keys = Object.keys(playlist['songs']).sort((a, b) => {
+        return Math.random() - 0.5;
+    });
+    keys.forEach(function(k) {
+        a[k] = playlist['songs'][k];
+    });
+    playlist['songs'] = a;
+    for(const [key, value] of Object.entries(originalPlaylist)) {
+        originalList.push(key);
+    }
+    
+    for(const [key, value] of Object.entries(a)) {
+        aList.push(key);
+    }
+    
+    let sameOrNot = (originalList.every(function(element, index) {
+        return element === aList[index];
+    }));
+
+    if(sameOrNot) {
+        console.log('yea')
+        shufflelol();
+    }
+
+
+
+    fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
+    navsound.click();
+
+}
+
+shuffleBtn.addEventListener('click', shufflelol);
+
+
+
+
+volumeBar.addEventListener('input', async () => {
+    if(volumeBar.value == 0) {
+        volIcon.src = '../images/volume-x.svg';
+    } else if(volumeBar.value <=39) {
+        volIcon.src = '../images/volume-1.svg';
+    } else {
+        volIcon.src = '../images/volume-2.svg'
+    }
+
     console.log(volumeBar.value)
     playlist['general']['songPlaying']['volume'] = volumeBar.value;
     sound.volume(parseInt(volumeBar.value) / 100)
     fs.writeFileSync(playlistPath, JSON.stringify(playlist, null, 2));
 });
 
-playingBar.addEventListener('change', async () => {
+playingBar.addEventListener('input', async () => {
     var parts = playlist['general']['songPlaying']['length'].split(':');
     var seconds = (parseInt(parts[0]) * 60) + parseInt(parts[1]);
     console.log(seconds);
