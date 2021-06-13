@@ -40,6 +40,8 @@ const loop = document.getElementById('loop');
 let navsound = document.getElementById("navsound");
 let exit_btn = document.getElementById("exit_btn");
 let minimize_btn = document.getElementById("minimize_btn");
+let home_warn = document.getElementById("home_warn");
+let search_warn = document.getElementById("search_warn");
 
 let length;
 
@@ -124,6 +126,9 @@ function update_next_songs() {
     */
     for (var i of list_of_unix) {
         nextSongTemplate(playlist['songs'][i]['id'], playlist['songs'][i]['name'], playlist['songs'][i]['length'], i)
+    }
+    if (list_of_unix.length < 1) {
+        nextSongTemplate("", "No Songs", "", "", thumbnail = "../images/logo.png");
     }
 }
 
@@ -291,6 +296,7 @@ minimize_btn.addEventListener('click', () => {
 });
 
 function songTemplate(id, name, length, thumbnail = null) {
+    home_warn.innerHTML = "Click on song to save to your playlist!";
     let div = document.createElement('div');
     let img = document.createElement('img');
     let p = document.createElement('p');
@@ -463,10 +469,17 @@ navsound.addEventListener('click', () => {
     while (songs_Lib_Div.firstChild) {
         songs_Lib_Div.removeChild(songs_Lib_Div.lastChild);
     }
+    counter = 0;
     for (const [key, value] of Object.entries(playlist['songs'])) {
+        counter++;
         songLibTemplate(value["id"], value["name"], value["length"], key);
         var div = document.getElementById(value["id"]);
         // div.addEventListener('click', deleteLibVar.bind(div));
+    }
+    if (counter == 0) {
+        search_warn.innerHTML = "Go to Home to start.";
+    } else {
+        search_warn.innerHTML = "Click on song to play it!";
     }
 });
 
