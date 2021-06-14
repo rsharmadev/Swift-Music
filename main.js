@@ -36,7 +36,9 @@ function richPresence() {
     })
 }
 
-richPresence();
+if ((process.argv).indexOf("--no-rich-presence") == -1) {
+    richPresence();
+}
 
 let config = new yt({
     "ffmpegPath": "ffmpeg.exe",
@@ -193,12 +195,15 @@ ipcMain.on('download_song', (event, data) => {
 
 
 ipcMain.on('status', (_, data) => {
-    rpc.setActivity({
-        details: data,
-        startTimestamp: timeObj,
-        largeImageKey: "swift",
-        largeImageText: "Swift Music"
-    })
+    try {
+        rpc.setActivity({
+            details: data,
+            startTimestamp: timeObj,
+            largeImageKey: "swift",
+            largeImageText: "Swift Music"
+        });
+    }
+    catch {}
 })
 
 
@@ -262,12 +267,14 @@ ipcMain.on('youtube_id', async (event, data) => {
 });
 
 async function searcher(term) {
-    rpc.setActivity({
-        details: "Searching for new songs!",
-        startTimestamp: timeObj,
-        largeImageKey: "swift",
-        largeImageText: "Swift Music"
-    })
+    try {
+        rpc.setActivity({
+            details: "Searching for new songs!",
+            startTimestamp: timeObj,
+            largeImageKey: "swift",
+            largeImageText: "Swift Music"
+        });
+    } catch {}
     let search_term = await yts(term);
 
     let videos = search_term.videos.slice(0, 3);
