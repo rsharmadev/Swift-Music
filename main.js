@@ -11,7 +11,6 @@ let playlistPath = path.join(userDataPath, '/playlist.json');
 let songsPath = path.join(userDataPath, '/songs');
 let thumbnailPath = path.join(userDataPath, '/thumbnails');
 let playlist;
-// console.log(userDataPath);
 let win;
 const timeObj = new Date();
 
@@ -84,7 +83,6 @@ function createWindow() {
                         "id": "id",
                         "unix": "unix",
                         "name": "name",
-                        "timestamp": "timestamp",
                         "length": "length",
                         "playPause": "playPause",
                         "volume": "0.50"
@@ -149,7 +147,6 @@ async function saveToJson(id, songName, length) {
     temp_storage["id"] = id;
     temp_storage["name"] = songName;
     temp_storage["length"] = length;
-    console.log(length);
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     /*
     playlist['songs'][String(Date.now())] = {
@@ -222,7 +219,6 @@ async function video_search_download(id) {
 }
 
 config.on("finished", function (error, data) {
-    console.log('clicked');
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     playlist['songs'][String(Date.now())] = {
         id: temp_storage["id"],
@@ -238,12 +234,10 @@ config.on("finished", function (error, data) {
 });
 
 search_config.on("finished", async function (error, data) {
-    console.log('clicked');
     getImage(`https://img.youtube.com/vi/${temp_storage["id"]}/0.jpg`, temp_storage["id"]);
     let video = await yts({ videoId: temp_storage["id"] })
     temp_storage["name"] = video.title;
     temp_storage["length"] = video.duration.timestamp;
-    console.log(data["video"]);
     playlist = JSON.parse(fs.readFileSync(playlistPath));
     playlist['songs'][String(Date.now())] = {
         id: temp_storage["id"],
